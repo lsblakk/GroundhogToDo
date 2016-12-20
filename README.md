@@ -31,13 +31,13 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/465TV1x.gifv' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/lsblakk/GroundhogToDo/blob/master/groundhog.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+This is just the basic app, more functionality coming soon.  Stay tuned!
 
 ## License
 
