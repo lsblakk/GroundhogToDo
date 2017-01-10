@@ -4,7 +4,7 @@ Groundhog ToDo is an android app that allows building a todo list and basic todo
 
 Submitted by: Lukas Blakk
 
-Time spent: 3 hours spent in total
+Time spent: 9 hours spent in total
 
 ## User Stories
 
@@ -19,7 +19,7 @@ The following **optional** features are implemented:
 * [ ] Persist the todo items [into SQLite](http://guides.codepath.com/android/Persisting-Data-to-the-Device#sqlite) instead of a text file
 * [ ] Improve style of the todo items in the list [using a custom adapter](http://guides.codepath.com/android/Using-an-ArrayAdapter-with-ListView)
 * [ ] Add support for completion due dates for todo items (and display within listview item)
-* [ ] Use a [DialogFragment](http://guides.codepath.com/android/Using-DialogFragment) instead of new Activity for editing items
+* [x] Use a [DialogFragment](http://guides.codepath.com/android/Using-DialogFragment) instead of new Activity for editing items
 * [ ] Add support for selecting the priority of each todo item (and display in listview item)
 * [ ] Tweak the style improving the UI / UX, play with colors, images or backgrounds
 
@@ -29,9 +29,9 @@ The following **additional** features are implemented:
 
 ## Video Walkthrough 
 
-Here's a walkthrough of implemented user stories:
+Here's a walkthrough of implemented user stories for the basic app now with editing in DialogFragment:
 
-<img src='https://github.com/lsblakk/GroundhogToDo/blob/master/groundhog.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/lsblakk/GroundhogToDo/blob/master/groundhog_with_edit_fragment.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -41,7 +41,7 @@ This is just the basic app, more functionality coming soon.  Stay tuned!
 
 ## License
 
-    Copyright 2016 Lukas Blakk
+    Copyright 2017 Lukas Blakk
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
