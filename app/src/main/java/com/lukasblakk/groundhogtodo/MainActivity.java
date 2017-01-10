@@ -1,6 +1,6 @@
 package com.lukasblakk.groundhogtodo;
 
-import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
 
@@ -17,12 +16,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+import com.lukasblakk.groundhogtodo.EditDialogFragment.EditDialogListener;
+
+
+public class MainActivity extends AppCompatActivity implements EditDialogListener {
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
     ListView lvItems;
-
-    private final int REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,34 +34,6 @@ public class MainActivity extends AppCompatActivity {
         lvItems.setAdapter(itemsAdapter);
         setupListViewListener();
         setupEditViewListener();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
-            String text = data.getExtras().getString("text");
-            int pos = data.getExtras().getInt("position");
-            Log.d("pos in onActivityResult", "Value: " + pos);
-            items.set(pos, text);
-            itemsAdapter.notifyDataSetChanged();
-            writeItems();
-        }
-    }
-
-    private void setupEditViewListener() {
-        lvItems.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
-                        String text = (String) lvItems.getItemAtPosition(pos);
-                        Intent i = new Intent(MainActivity.this, EditItemActivity.class);
-                        i.putExtra("position", pos);
-                        i.putExtra("text", text);
-                        Log.d("pos in EditViewListener", "Value: " + pos);
-                        startActivityForResult(i, REQUEST_CODE);
-                    }
-                }
-        );
     }
 
     private void setupListViewListener() {
@@ -77,13 +49,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupEditViewListener() {
+        lvItems.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
+                        FragmentManager fm = getSupportFragmentManager();
+                        String text = (String) lvItems.getItemAtPosition(pos);
+                        EditDialogFragment editDialogFragment = EditDialogFragment.newInstance("Edit Item", text, pos);
+                        editDialogFragment.show(fm, "fragment_edit");
+
+                    }
+                }
+        );
+    }
+
     private void readItems() {
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "todo.txt");
         try {
-            items = new ArrayList<String>(FileUtils.readLines(todoFile));
+            items = new ArrayList<>(FileUtils.readLines(todoFile));
         } catch (IOException e) {
-            items = new ArrayList<String>();
+            items = new ArrayList<>();
         }
     }
 
@@ -104,5 +91,16 @@ public class MainActivity extends AppCompatActivity {
         writeItems();
         etNewItem.setText("");
     }
+
+    // This method is invoked in the activity when the listener is triggered
+    @Override
+    public void onFinishEditDialog(String text, int pos) {
+        // Toast.makeText(this, "Updated " + text, Toast.LENGTH_SHORT).show();
+        Log.d("pos in onActivityResult", "Value: " + pos);
+        items.set(pos, text);
+        itemsAdapter.notifyDataSetChanged();
+        writeItems();
+    }
+
 
 }
