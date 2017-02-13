@@ -1,28 +1,30 @@
-package com.lukasblakk.groundhogtodo;
+package com.lukasblakk.groundhogtodo.activities;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import com.lukasblakk.groundhogtodo.EditDialogFragment.EditDialogListener;
+import com.lukasblakk.groundhogtodo.adapters.ItemsAdapter;
+import com.lukasblakk.groundhogtodo.data.TodoItemsDatabaseHelper;
+import com.lukasblakk.groundhogtodo.fragments.EditDialogFragment;
+import com.lukasblakk.groundhogtodo.fragments.EditDialogFragment.EditDialogListener;
+import com.lukasblakk.groundhogtodo.R;
+import com.lukasblakk.groundhogtodo.models.Item;
 
 
 public class MainActivity extends AppCompatActivity implements EditDialogListener {
-    ArrayList<String> items;
-    ArrayAdapter<String> itemsAdapter;
+    ArrayList<Item> items = new ArrayList<>();
+    ItemsAdapter itemsAdapter;
     ListView lvItems;
+    TodoItemsDatabaseHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +32,9 @@ public class MainActivity extends AppCompatActivity implements EditDialogListene
         setContentView(R.layout.activity_main);
         lvItems = (ListView)findViewById(R.id.lvItems);
         readItems();
-        itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
+        itemsAdapter = new ItemsAdapter(this, items);
         lvItems.setAdapter(itemsAdapter);
+        helper = TodoItemsDatabaseHelper.getInstance(this);
         setupListViewListener();
         setupEditViewListener();
     }
@@ -41,10 +44,12 @@ public class MainActivity extends AppCompatActivity implements EditDialogListene
                 new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapter, View item, int pos, long id) {
+                Item deleteItem = (Item) lvItems.getItemAtPosition(pos);
+                Boolean deleted = helper.deleteItem(deleteItem);
                 items.remove(pos);
                 itemsAdapter.notifyDataSetChanged();
                 writeItems();
-                return true;
+                return deleted;
             }
         });
     }
@@ -55,49 +60,47 @@ public class MainActivity extends AppCompatActivity implements EditDialogListene
                     @Override
                     public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
                         FragmentManager fm = getSupportFragmentManager();
-                        String text = (String) lvItems.getItemAtPosition(pos);
-                        EditDialogFragment editDialogFragment = EditDialogFragment.newInstance("Edit Item", text, pos);
+                        Item editItem = (Item) lvItems.getItemAtPosition(pos);
+                        EditDialogFragment editDialogFragment = EditDialogFragment.newInstance("Edit Item", editItem.text, pos);
                         editDialogFragment.show(fm, "fragment_edit");
-
                     }
                 }
         );
     }
 
     private void readItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            items = new ArrayList<>(FileUtils.readLines(todoFile));
-        } catch (IOException e) {
-            items = new ArrayList<>();
-        }
+        helper = TodoItemsDatabaseHelper.getInstance(this);
+        items = helper.getAllItems();
     }
 
     private void writeItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            FileUtils.writeLines(todoFile, items);
-        } catch (IOException e) {
-            e.printStackTrace();
+        helper = TodoItemsDatabaseHelper.getInstance(this);
+        for (Item item : items) {
+            helper.addOrUpdateItem(item);
         }
     }
 
     public void onAddItem(View v) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
-        String itemText = etNewItem.getText().toString();
-        itemsAdapter.add(itemText);
+        if(TextUtils.isEmpty(etNewItem.getText().toString())) {
+            etNewItem.setError("Item cannot be empty");
+            return;
+        }
+        Item newItem = new Item();
+        newItem.text = etNewItem.getText().toString();
+        itemsAdapter.add(newItem);
         writeItems();
         etNewItem.setText("");
     }
 
     // This method is invoked in the activity when the listener is triggered
     @Override
-    public void onFinishEditDialog(String text, int pos) {
-        // Toast.makeText(this, "Updated " + text, Toast.LENGTH_SHORT).show();
+    public void onFinishEditDialog(String origText, String editedText, int pos) {
         Log.d("pos in onActivityResult", "Value: " + pos);
-        items.set(pos, text);
+        Item originalItem = new Item(origText);
+        helper.updateItemText(originalItem, editedText);
+        Item editedItem = new Item(editedText);
+        items.set(pos, editedItem);
         itemsAdapter.notifyDataSetChanged();
         writeItems();
     }

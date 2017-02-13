@@ -1,4 +1,4 @@
-package com.lukasblakk.groundhogtodo;
+package com.lukasblakk.groundhogtodo.fragments;
 
 /**
  * Created by lukas on 1/9/17.
@@ -6,6 +6,7 @@ package com.lukasblakk.groundhogtodo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import com.lukasblakk.groundhogtodo.R;
 
 
 public class EditDialogFragment extends DialogFragment implements OnEditorActionListener {
@@ -31,7 +34,7 @@ public class EditDialogFragment extends DialogFragment implements OnEditorAction
 
     // Defines the listener interface with a method passing back data result.
     public interface EditDialogListener {
-        void onFinishEditDialog(String text, int pos);
+        void onFinishEditDialog(String origText, String editedText, int pos);
     }
 
 
@@ -95,9 +98,13 @@ public class EditDialogFragment extends DialogFragment implements OnEditorAction
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (EditorInfo.IME_ACTION_DONE == actionId) {
+            if(TextUtils.isEmpty(mEditText.getText().toString())) {
+                mEditText.setError("Item cannot be empty");
+                return false;
+            }
             // Return input text back to activity through the implemented listener
             EditDialogListener listener = (EditDialogListener) getActivity();
-            listener.onFinishEditDialog(mEditText.getText().toString(), pos);
+            listener.onFinishEditDialog(text, mEditText.getText().toString(), pos);
             // Close the dialog and return back to the parent activity
             dismiss();
             return true;
