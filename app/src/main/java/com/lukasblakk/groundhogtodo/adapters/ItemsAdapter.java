@@ -32,12 +32,10 @@ public class ItemsAdapter extends ArrayAdapter<Item> {
             // Lookup view for data population
             TextView tvText = (TextView) convertView.findViewById(R.id.tvText);
             TextView tvDueDate = (TextView) convertView.findViewById(R.id.tvDueDate);
-            TextView tvPriority = (TextView) convertView.findViewById(R.id.tvPriority);
             TextView tvRepeat = (TextView) convertView.findViewById(R.id.tvRepeat);
             // Populate the data into the template view using the data object
             tvText.setText(item.text);
             tvDueDate.setText(item.dueDate);
-            tvPriority.setText(item.priority);
             tvRepeat.setText(item.repeat);
             // Return the completed view to render on screen
             return convertView;

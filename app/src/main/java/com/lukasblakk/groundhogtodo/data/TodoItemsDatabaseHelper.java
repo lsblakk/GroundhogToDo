@@ -30,7 +30,6 @@ public class TodoItemsDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_ITEM_ID = "id";
     private static final String KEY_ITEM_TEXT = "text";
     private static final String KEY_ITEM_DUE_DATE = "dueDate";
-    private static final String KEY_ITEM_PRIORITY = "priority";
     private static final String KEY_ITEM_REPEAT = "repeat";
 
     // Called when the database connection is being configured.
@@ -50,7 +49,6 @@ public class TodoItemsDatabaseHelper extends SQLiteOpenHelper {
                 KEY_ITEM_ID + " INTEGER PRIMARY KEY," + // Define a primary key
                 KEY_ITEM_TEXT + " TEXT," +
                 KEY_ITEM_DUE_DATE + " TEXT," +
-                KEY_ITEM_PRIORITY + " TEXT," +
                 KEY_ITEM_REPEAT + " TEXT" +
                 ")";
 
@@ -97,7 +95,6 @@ public class TodoItemsDatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(KEY_ITEM_TEXT, item.text);
-            values.put(KEY_ITEM_PRIORITY, item.priority);
             values.put(KEY_ITEM_DUE_DATE, item.dueDate);
             values.put(KEY_ITEM_REPEAT, item.repeat);
 
@@ -152,7 +149,6 @@ public class TodoItemsDatabaseHelper extends SQLiteOpenHelper {
                     Item newItem = new Item();
                     newItem.text = cursor.getString(cursor.getColumnIndex(KEY_ITEM_TEXT));
                     newItem.dueDate = cursor.getString(cursor.getColumnIndex(KEY_ITEM_DUE_DATE));
-                    newItem.priority = cursor.getString(cursor.getColumnIndex(KEY_ITEM_PRIORITY));
                     newItem.repeat = cursor.getString(cursor.getColumnIndex(KEY_ITEM_REPEAT));
                     items.add(newItem);
                 } while(cursor.moveToNext());

@@ -5,22 +5,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 
 import com.lukasblakk.groundhogtodo.adapters.ItemsAdapter;
 import com.lukasblakk.groundhogtodo.data.TodoItemsDatabaseHelper;
+import com.lukasblakk.groundhogtodo.fragments.AddItemFragment;
 import com.lukasblakk.groundhogtodo.fragments.EditDialogFragment;
 import com.lukasblakk.groundhogtodo.fragments.EditDialogFragment.EditDialogListener;
+import com.lukasblakk.groundhogtodo.fragments.AddItemFragment.OnAddItemListener;
 import com.lukasblakk.groundhogtodo.R;
 import com.lukasblakk.groundhogtodo.models.Item;
 
 
-public class MainActivity extends AppCompatActivity implements EditDialogListener {
+public class MainActivity extends AppCompatActivity implements EditDialogListener, OnAddItemListener {
     ArrayList<Item> items = new ArrayList<>();
     ItemsAdapter itemsAdapter;
     ListView lvItems;
@@ -30,13 +35,22 @@ public class MainActivity extends AppCompatActivity implements EditDialogListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         lvItems = (ListView)findViewById(R.id.lvItems);
         readItems();
         itemsAdapter = new ItemsAdapter(this, items);
         lvItems.setAdapter(itemsAdapter);
         helper = TodoItemsDatabaseHelper.getInstance(this);
+        setSupportActionBar(toolbar);
         setupListViewListener();
         setupEditViewListener();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
     }
 
     private void setupListViewListener() {
@@ -80,17 +94,11 @@ public class MainActivity extends AppCompatActivity implements EditDialogListene
         }
     }
 
-    public void onAddItem(View v) {
-        EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
-        if(TextUtils.isEmpty(etNewItem.getText().toString())) {
-            etNewItem.setError("Item cannot be empty");
-            return;
-        }
-        Item newItem = new Item();
-        newItem.text = etNewItem.getText().toString();
-        itemsAdapter.add(newItem);
-        writeItems();
-        etNewItem.setText("");
+    public void onAddAction(MenuItem mi) {
+        FragmentManager fm = getSupportFragmentManager();
+        AddItemFragment addItemFragment = AddItemFragment.newInstance();
+        addItemFragment.show(fm, "fragment_add_item");
+
     }
 
     // This method is invoked in the activity when the listener is triggered
@@ -105,5 +113,12 @@ public class MainActivity extends AppCompatActivity implements EditDialogListene
         writeItems();
     }
 
-
+    // This method is invoked in the activity when the listener is triggered
+    @Override
+    public void onFinishAddDialog(String text, String dueDate, String repeats) {
+        Item newItem = new Item();
+        newItem.text = text;
+        itemsAdapter.add(newItem);
+        writeItems();
+    }
 }

@@ -13,11 +13,6 @@ android:layout_height="match_parent" >
     android:layout_height="wrap_content"
     android:text="Due Date" />
 <TextView
-    android:id="@+id/tvPriority"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Priority" />
-<TextView
     android:id="@+id/tvRepeat"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
