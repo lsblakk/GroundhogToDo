@@ -4,7 +4,7 @@ Groundhog ToDo is an android app that allows building a todo list and basic todo
 
 Submitted by: Lukas Blakk
 
-Time spent: 16 hours spent in total
+Time spent: 30 hours spent in total
 
 ## User Stories
 
@@ -26,18 +26,21 @@ The following **optional** features are implemented:
 The following **additional** features are implemented:
 
 * [x] Text validation to prevent empty items
+* [x] Add item in a fragment instead of Main Activity
+* [x] Custom icon
+* [x] Using Toolbar with "+" icon to add new items
 
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories for the basic app now with editing in DialogFragment:
 
-<img src='https://github.com/lsblakk/GroundhogToDo/blob/master/groundhog_with_sqlite_custom_adapter.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/lsblakk/GroundhogToDo/blob/master/groundhog_final_screencap.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Continuing to improve app.  Now that database is in place will be working on due date, priority and then additional UI improvements - plus the ability to repeat an item daily.
+Worked on adding datepicker for some time but have been stuck on getting and setting values from the datepicker so am submitting without that aspect completed.  I did as many of the suggested items as I could in the time I had.  It was fun to learn about Toolbar and I hope to get more time to learn how to layout & customize the UI of an app in future projects.
 
 ## License
 

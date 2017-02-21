@@ -14,8 +14,7 @@
         android:minWidth="200dp"
         android:padding="10dp"
         android:layout_margin="10dp"
-        android:textAlignment="center"
-        android:imeOptions="actionDone">
+        android:textAlignment="center">
         <requestFocus />
     </EditText>
     <Space
@@ -30,12 +29,10 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <CheckBox
-        android:text="Repeat Daily?"
+        android:layout_height="wrap_content" />    <Button
+        android:text="Update"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cbRepeatDaily" />
+        android:id="@+id/btnUpdate" />
 
 </LinearLayout>

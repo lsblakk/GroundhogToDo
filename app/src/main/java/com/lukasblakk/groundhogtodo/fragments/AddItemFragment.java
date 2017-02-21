@@ -5,20 +5,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
+import android.view.View.OnClickListener;
 
 import com.lukasblakk.groundhogtodo.R;
 
-import static android.text.style.TtsSpan.ARG_TEXT;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.text.ParseException;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,13 +30,37 @@ import static android.text.style.TtsSpan.ARG_TEXT;
  * Use the {@link AddItemFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddItemFragment extends DialogFragment implements OnEditorActionListener {
+public class AddItemFragment extends DialogFragment implements OnClickListener {
 
     private EditText mAddText;
+    private DatePicker mDatePicker;
+
+    private Button saveBtn = null;
+
+    // Handling Integer for calendar dates
+
+    public static final String DATE_FORMAT = "yyyyMMdd";
+    private static final SimpleDateFormat dateFormat = new
+            SimpleDateFormat(DATE_FORMAT);
+
+    public static long formatDateAsLong(Calendar cal){
+        return Long.parseLong(dateFormat.format(cal.getTime()));
+    }
+
+    public static Calendar getCalendarFromFormattedLong(long l){
+        try {
+            Calendar c = Calendar.getInstance();
+            c.setTime(dateFormat.parse(String.valueOf(l)));
+            return c;
+
+        } catch (ParseException e) {
+            return null;
+        }
+    }
 
     // Defines the listener interface with a method passing back data result.
     public interface OnAddItemListener {
-        void onFinishAddDialog(String text, String dueDate, String repeats);
+        void onFinishAddDialog(String text, Integer dueDate);
     }
 
     public AddItemFragment() {
@@ -70,37 +96,49 @@ public class AddItemFragment extends DialogFragment implements OnEditorActionLis
         super.onViewCreated(view, savedInstanceState);
         // Get field from view
         mAddText = (EditText) view.findViewById(R.id.txt_new_item);
+        mDatePicker = (DatePicker) view.findViewById(R.id.dpNewItem);
         // Show soft keyboard automatically and request focus to field
         mAddText.requestFocus();
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        // callback when the "Done" button is pressed on keyboard
-        mAddText.setOnEditorActionListener(this);
+        // Use the current date as the default values for the picker
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        mDatePicker.updateDate(year, month, day);
+        // Activate the button listener
+        saveBtn = (Button) view.findViewById(R.id.btnSave);
+        saveBtn.setOnClickListener(this);
     }
 
-
-    // Fires whenever the EditText has an action performed
-    // In this case, when the "Done" button is pressed
-    // REQUIRES a 'soft keyboard' (virtual keyboard)
     @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (EditorInfo.IME_ACTION_DONE == actionId) {
-            if(TextUtils.isEmpty(mAddText.getText().toString())) {
-                mAddText.setError("Item cannot be empty");
-                return false;
-            }
-            // TODO Get & set the calendar date here
-            String dueDate = "today";
-            // TODO Get the repeats daily value
-            String repeats = "true";
-            // Return input text back to activity through the implemented listener
-            AddItemFragment.OnAddItemListener listener = (AddItemFragment.OnAddItemListener) getActivity();
-            // TODO send the date & repeat values and adjust the method to accept
-            listener.onFinishAddDialog(mAddText.getText().toString(), dueDate, repeats);
-            // Close the dialog and return back to the parent activity
-            dismiss();
-            return true;
+    public void onClick(View view) {
+        if(TextUtils.isEmpty(mAddText.getText().toString())) {
+            mAddText.setError("Item cannot be empty");
         }
-        return false;
+        // TODO Get & set the calendar date here
+        mDatePicker = (DatePicker) view.findViewById(R.id.dpNewItem);
+        Calendar c = Calendar.getInstance();
+        int day;
+        int month;
+        int year;
+        if (mDatePicker != null) {
+            day = mDatePicker.getDayOfMonth();
+            month = mDatePicker.getMonth();
+            year =  mDatePicker.getYear();
+        } else {
+            year = c.YEAR;
+            month = c.MONTH;
+            day = c.DAY_OF_MONTH;
+        }
+        c.set(year, month, day);
+        Integer dueDate = (int) formatDateAsLong(c);
+        // Return input text back to activity through the implemented listener
+        AddItemFragment.OnAddItemListener listener = (AddItemFragment.OnAddItemListener) getActivity();
+        // TODO send the date & repeat values and adjust the method to accept
+        listener.onFinishAddDialog(mAddText.getText().toString(), dueDate);
+        // Close the dialog and return back to the parent activity
+        dismiss();
     }
 }

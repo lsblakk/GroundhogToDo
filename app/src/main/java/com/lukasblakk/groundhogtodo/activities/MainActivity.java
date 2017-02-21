@@ -3,13 +3,11 @@ package com.lukasblakk.groundhogtodo.activities;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements EditDialogListene
                     public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
                         FragmentManager fm = getSupportFragmentManager();
                         Item editItem = (Item) lvItems.getItemAtPosition(pos);
-                        EditDialogFragment editDialogFragment = EditDialogFragment.newInstance("Edit Item", editItem.text, pos);
+                        EditDialogFragment editDialogFragment = EditDialogFragment.newInstance("Edit Item", editItem.text, editItem.dueDate, pos);
                         editDialogFragment.show(fm, "fragment_edit");
                     }
                 }
@@ -103,11 +101,11 @@ public class MainActivity extends AppCompatActivity implements EditDialogListene
 
     // This method is invoked in the activity when the listener is triggered
     @Override
-    public void onFinishEditDialog(String origText, String editedText, int pos) {
+    public void onFinishEditDialog(String origText, String editedText, String dueDate, int pos) {
         Log.d("pos in onActivityResult", "Value: " + pos);
         Item originalItem = new Item(origText);
-        helper.updateItemText(originalItem, editedText);
-        Item editedItem = new Item(editedText);
+        helper.updateItem(originalItem, editedText, dueDate);
+        Item editedItem = new Item(editedText, dueDate);
         items.set(pos, editedItem);
         itemsAdapter.notifyDataSetChanged();
         writeItems();
@@ -115,10 +113,12 @@ public class MainActivity extends AppCompatActivity implements EditDialogListene
 
     // This method is invoked in the activity when the listener is triggered
     @Override
-    public void onFinishAddDialog(String text, String dueDate, String repeats) {
+    public void onFinishAddDialog(String text, String dueDate) {
         Item newItem = new Item();
         newItem.text = text;
+        newItem.dueDate = dueDate;
         itemsAdapter.add(newItem);
         writeItems();
     }
+
 }

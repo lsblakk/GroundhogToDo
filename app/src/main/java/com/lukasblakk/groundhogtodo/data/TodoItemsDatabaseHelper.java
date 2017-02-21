@@ -8,7 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import com.lukasblakk.groundhogtodo.models.Item;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static android.content.ContentValues.TAG;
 
@@ -30,7 +33,6 @@ public class TodoItemsDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_ITEM_ID = "id";
     private static final String KEY_ITEM_TEXT = "text";
     private static final String KEY_ITEM_DUE_DATE = "dueDate";
-    private static final String KEY_ITEM_REPEAT = "repeat";
 
     // Called when the database connection is being configured.
     // Configure database settings for things like foreign key support, write-ahead logging, etc.
@@ -49,7 +51,6 @@ public class TodoItemsDatabaseHelper extends SQLiteOpenHelper {
                 KEY_ITEM_ID + " INTEGER PRIMARY KEY," + // Define a primary key
                 KEY_ITEM_TEXT + " TEXT," +
                 KEY_ITEM_DUE_DATE + " TEXT," +
-                KEY_ITEM_REPEAT + " TEXT" +
                 ")";
 
         db.execSQL(CREATE_ITEMS_TABLE);
@@ -96,7 +97,6 @@ public class TodoItemsDatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(KEY_ITEM_TEXT, item.text);
             values.put(KEY_ITEM_DUE_DATE, item.dueDate);
-            values.put(KEY_ITEM_REPEAT, item.repeat);
 
             // First try to update the item in case the user already exists in the database
             // This assumes item text content is unique
@@ -149,7 +149,6 @@ public class TodoItemsDatabaseHelper extends SQLiteOpenHelper {
                     Item newItem = new Item();
                     newItem.text = cursor.getString(cursor.getColumnIndex(KEY_ITEM_TEXT));
                     newItem.dueDate = cursor.getString(cursor.getColumnIndex(KEY_ITEM_DUE_DATE));
-                    newItem.repeat = cursor.getString(cursor.getColumnIndex(KEY_ITEM_REPEAT));
                     items.add(newItem);
                 } while(cursor.moveToNext());
             }
@@ -164,13 +163,13 @@ public class TodoItemsDatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Update item text
-    public int updateItemText(Item item, String updatedText) {
+    public int updateItem(Item item, String updatedText, String dueDate) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_ITEM_TEXT, updatedText);
+        values.put(KEY_ITEM_DUE_DATE, dueDate);
 
-        // Updating profile picture url for user with that userName
         return db.update(TABLE_ITEMS, values, KEY_ITEM_TEXT + " = ?",
                 new String[] { String.valueOf(item.text) });
     }

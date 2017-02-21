@@ -36,18 +36,18 @@
         <DatePicker
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/dpEditItem"
+            android:id="@+id/dpNewItem"
             android:layout_weight="1.46" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <CheckBox
-            android:text="Repeats Daily?"
+        <Button
+            android:text="Save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/cbRepeatDaily" />
+            android:id="@+id/btnSave" />
 
     </LinearLayout>
 

@@ -7,24 +7,20 @@ package com.lukasblakk.groundhogtodo.models;
 public class Item {
     public String text;
     public String dueDate;
-    public String repeat;
 
     public Item() {
         this.text = "";
-        this.dueDate = "";
-        this.repeat = "";
+        this.dueDate = "today";
     }
 
     public Item(String text) {
         this.text = text;
-        this.dueDate = "";
-        this.repeat = "";
+        this.dueDate = "today";
     }
 
-    public Item(String text, String dueDate, String repeat) {
+    public Item(String text, String dueDate) {
         this.text = text;
         this.dueDate = dueDate;
-        this.repeat = repeat;
     }
 
 }
